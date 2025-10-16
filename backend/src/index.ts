@@ -7,6 +7,7 @@ import { ProductService } from './services/productService.js';
 import { authMiddleware, adminOnly, AuthRequest } from './middleware/auth.js';
 import { v4 as uuidv4 } from 'uuid';
 import { db } from './db/schema.js';
+import S3Service from './services/s3Service.js';
 
 dotenv.config();
 
@@ -241,6 +242,66 @@ app.delete('/api/products/:id', authMiddleware, adminOnly, (req: AuthRequest, re
     return res.status(404).json({ success: false, error: 'Product not found' });
   }
   res.json({ success: true, message: 'Product deleted' });
+});
+
+// ============ IMAGE UPLOAD ROUTES ============
+
+// POST upload product image (admin only)
+app.post('/api/upload', authMiddleware, adminOnly, async (req: AuthRequest, res: Response) => {
+  try {
+    // Extract base64 from request or handle file upload
+    const { imageBase64, fileName, contentType } = req.body;
+
+    if (!imageBase64 || !fileName) {
+      return res.status(400).json({ success: false, error: 'Image data and filename required' });
+    }
+
+    // Validate file type
+    const allowedTypes = ['image/jpeg', 'image/png', 'image/webp', 'image/gif'];
+    if (!allowedTypes.includes(contentType)) {
+      return res.status(400).json({ success: false, error: 'Invalid image type' });
+    }
+
+    // Convert base64 to buffer
+    const buffer = Buffer.from(imageBase64, 'base64');
+
+    // Generate S3 key
+    const s3Key = `products/${uuidv4()}-${fileName}`;
+
+    // Upload to S3
+    const imageUrl = await S3Service.uploadFile(s3Key, buffer, contentType);
+
+    res.json({ success: true, data: { imageUrl, key: s3Key } });
+  } catch (err) {
+    console.error('Upload error:', err);
+    res.status(500).json({ success: false, error: (err as Error).message });
+  }
+});
+
+// GET presigned upload URL (admin only)
+app.post('/api/upload/presigned', authMiddleware, adminOnly, async (req: AuthRequest, res: Response) => {
+  try {
+    const { fileName, contentType } = req.body;
+
+    if (!fileName || !contentType) {
+      return res.status(400).json({ success: false, error: 'Filename and content type required' });
+    }
+
+    const s3Key = `products/${uuidv4()}-${fileName}`;
+    const presignedUrl = await S3Service.getUploadUrl(s3Key, 3600);
+
+    res.json({
+      success: true,
+      data: {
+        presignedUrl,
+        key: s3Key,
+        imageUrl: `https://${process.env.CLOUDFRONT_DOMAIN_NAME}/${s3Key}`,
+      },
+    });
+  } catch (err) {
+    console.error('Presigned URL error:', err);
+    res.status(500).json({ success: false, error: (err as Error).message });
+  }
 });
 
 // ============ AUTH ROUTES ============
