@@ -5,13 +5,13 @@
   "type": "module",
   "main": "dist/index.js",
   "scripts": {
-    "dev": "node --loader tsx src/index.ts",
+    "dev": "node --import tsx src/index.ts",
     "build": "tsc",
     "start": "node dist/index.js",
     "test": "vitest",
     "test:ui": "vitest --ui",
     "test:coverage": "vitest --coverage",
-    "seed": "node --loader tsx src/db/seed.ts",
+    "seed": "node --import tsx src/db/seed.ts",
     "type-check": "tsc --noEmit"
   },
   "dependencies": {
@@ -30,6 +30,9 @@
     "@types/node": "^20.10.6",
     "@types/jsonwebtoken": "^9.0.7",
     "@types/bcryptjs": "^2.4.6",
+    "@types/better-sqlite3": "^7.6.8",
+    "@types/uuid": "^9.0.7",
+    "@types/cors": "^2.8.17",
     "typescript": "^5.3.3",
     "tsx": "^4.7.0",
     "vitest": "^1.1.1",

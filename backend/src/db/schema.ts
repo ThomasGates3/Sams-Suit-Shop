@@ -2,6 +2,7 @@ import Database from 'better-sqlite3';
 import path from 'path';
 import { fileURLToPath } from 'url';
 import fs from 'fs';
+import type BetterSqlite3 from 'better-sqlite3';
 
 const __dirname = path.dirname(fileURLToPath(import.meta.url));
 const dataDir = path.join(__dirname, '../../data');
@@ -11,7 +12,7 @@ if (!fs.existsSync(dataDir)) {
 }
 
 const dbPath = path.join(dataDir, 'suit-shop.db');
-export const db = new Database(dbPath);
+export const db: BetterSqlite3.Database = new Database(dbPath);
 
 export function initializeDatabase() {
   // Users table

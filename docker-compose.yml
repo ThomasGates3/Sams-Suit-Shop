@@ -34,8 +34,7 @@ services:
     ports:
       - "5173:80"
     depends_on:
-      backend:
-        condition: service_healthy
+      - backend
     environment:
       VITE_API_URL: http://localhost:3000
     volumes:
