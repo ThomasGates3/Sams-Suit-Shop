@@ -9,4 +9,5 @@ dist/
 coverage/
 .vitest/
 backend/data/
-frontend/.vite/
+frontend/.vite/.terraform/
+terraform.tfstate*

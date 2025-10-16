@@ -21,7 +21,7 @@ resource "aws_vpc" "main" {
   tags = { Name = "sams-suit-shop-vpc" }
 }
 
-# Subnets
+# Public Subnets (for ALB and NAT Gateway)
 resource "aws_subnet" "public1" {
   vpc_id                  = aws_vpc.main.id
   cidr_block              = "10.0.1.0/24"
@@ -38,6 +38,23 @@ resource "aws_subnet" "public2" {
   map_public_ip_on_launch = true
 
   tags = { Name = "sams-suit-shop-public-2" }
+}
+
+# Private Subnets (for ECS tasks)
+resource "aws_subnet" "private1" {
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = "10.0.10.0/24"
+  availability_zone = data.aws_availability_zones.available.names[0]
+
+  tags = { Name = "sams-suit-shop-private-1" }
+}
+
+resource "aws_subnet" "private2" {
+  vpc_id            = aws_vpc.main.id
+  cidr_block        = "10.0.11.0/24"
+  availability_zone = data.aws_availability_zones.available.names[1]
+
+  tags = { Name = "sams-suit-shop-private-2" }
 }
 
 # Data source for availability zones
@@ -71,6 +88,43 @@ resource "aws_route_table_association" "public1" {
 resource "aws_route_table_association" "public2" {
   subnet_id      = aws_subnet.public2.id
   route_table_id = aws_route_table.public.id
+}
+
+# Elastic IP for NAT Gateway
+resource "aws_eip" "nat" {
+  domain = "vpc"
+  tags   = { Name = "sams-suit-shop-eip" }
+  depends_on = [aws_internet_gateway.main]
+}
+
+# NAT Gateway (in public subnet 1)
+resource "aws_nat_gateway" "main" {
+  allocation_id = aws_eip.nat.id
+  subnet_id     = aws_subnet.public1.id
+  tags          = { Name = "sams-suit-shop-nat" }
+  depends_on    = [aws_internet_gateway.main]
+}
+
+# Private Route Table (for ECS tasks in private subnets)
+resource "aws_route_table" "private" {
+  vpc_id = aws_vpc.main.id
+
+  route {
+    cidr_block     = "0.0.0.0/0"
+    nat_gateway_id = aws_nat_gateway.main.id
+  }
+
+  tags = { Name = "sams-suit-shop-private-rt" }
+}
+
+resource "aws_route_table_association" "private1" {
+  subnet_id      = aws_subnet.private1.id
+  route_table_id = aws_route_table.private.id
+}
+
+resource "aws_route_table_association" "private2" {
+  subnet_id      = aws_subnet.private2.id
+  route_table_id = aws_route_table.private.id
 }
 
 # Security Group
@@ -306,7 +360,9 @@ resource "aws_ecs_task_definition" "backend" {
       ]
       environment = [
         { name = "NODE_ENV", value = "production" },
-        { name = "PORT", value = "3000" }
+        { name = "PORT", value = "3000" },
+        { name = "JWT_SECRET", value = "prod-secret-key-min-32-characters-long" },
+        { name = "JWT_EXPIRY", value = "3600" }
       ]
       logConfiguration = {
         logDriver = "awslogs"
@@ -357,7 +413,7 @@ resource "aws_ecs_task_definition" "frontend" {
   tags = { Name = "sams-suit-shop-frontend" }
 }
 
-# ECS Service - Backend
+# ECS Service - Backend (in PRIVATE subnets, outbound via NAT Gateway)
 resource "aws_ecs_service" "backend" {
   name            = "sams-suit-shop-backend"
   cluster         = aws_ecs_cluster.main.id
@@ -366,9 +422,9 @@ resource "aws_ecs_service" "backend" {
   launch_type     = "FARGATE"
 
   network_configuration {
-    subnets          = [aws_subnet.public1.id, aws_subnet.public2.id]
+    subnets          = [aws_subnet.private1.id, aws_subnet.private2.id]
     security_groups  = [aws_security_group.ecs.id]
-    assign_public_ip = true
+    assign_public_ip = false
   }
 
   load_balancer {
@@ -377,12 +433,12 @@ resource "aws_ecs_service" "backend" {
     container_port   = 3000
   }
 
-  depends_on = [aws_lb_listener.main]
+  depends_on = [aws_lb_listener.main, aws_nat_gateway.main]
 
   tags = { Name = "sams-suit-shop-backend" }
 }
 
-# ECS Service - Frontend
+# ECS Service - Frontend (in PRIVATE subnets, outbound via NAT Gateway)
 resource "aws_ecs_service" "frontend" {
   name            = "sams-suit-shop-frontend"
   cluster         = aws_ecs_cluster.main.id
@@ -391,9 +447,9 @@ resource "aws_ecs_service" "frontend" {
   launch_type     = "FARGATE"
 
   network_configuration {
-    subnets          = [aws_subnet.public1.id, aws_subnet.public2.id]
+    subnets          = [aws_subnet.private1.id, aws_subnet.private2.id]
     security_groups  = [aws_security_group.ecs.id]
-    assign_public_ip = true
+    assign_public_ip = false
   }
 
   load_balancer {
@@ -402,7 +458,7 @@ resource "aws_ecs_service" "frontend" {
     container_port   = 80
   }
 
-  depends_on = [aws_lb_listener.main]
+  depends_on = [aws_lb_listener.main, aws_nat_gateway.main]
 
   tags = { Name = "sams-suit-shop-frontend" }
 }
@@ -417,13 +473,15 @@ resource "aws_appautoscaling_target" "backend" {
 }
 
 resource "aws_appautoscaling_policy" "backend_cpu" {
-  policy_name            = "sams-suit-shop-backend-cpu-scaling"
-  policy_type            = "TargetTrackingScaling"
-  resource_id            = aws_appautoscaling_target.backend.resource_id
-  scalable_dimension     = aws_appautoscaling_target.backend.scalable_dimension
-  service_namespace      = aws_appautoscaling_target.backend.service_namespace
+  name               = "sams-suit-shop-backend-cpu-scaling"
+  policy_type        = "TargetTrackingScaling"
+  resource_id        = aws_appautoscaling_target.backend.resource_id
+  scalable_dimension = aws_appautoscaling_target.backend.scalable_dimension
+  service_namespace  = aws_appautoscaling_target.backend.service_namespace
+
   target_tracking_scaling_policy_configuration {
-    target_value       = 70.0
+    target_value = 70.0
+
     predefined_metric_specification {
       predefined_metric_type = "ECSServiceAverageCPUUtilization"
     }
