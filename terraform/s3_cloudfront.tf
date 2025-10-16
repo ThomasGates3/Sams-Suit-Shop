@@ -62,6 +62,7 @@ resource "aws_s3_bucket_lifecycle_configuration" "product_images" {
   rule {
     id     = "delete-old-versions"
     status = "Enabled"
+    filter {}
 
     noncurrent_version_expiration {
       noncurrent_days = 30
@@ -71,6 +72,7 @@ resource "aws_s3_bucket_lifecycle_configuration" "product_images" {
   rule {
     id     = "abort-incomplete-multipart"
     status = "Enabled"
+    filter {}
 
     abort_incomplete_multipart_upload {
       days_after_initiation = 7
@@ -86,9 +88,12 @@ resource "aws_cloudfront_origin_access_identity" "product_images" {
 # CloudFront Distribution
 resource "aws_cloudfront_distribution" "product_images" {
   origin {
-    domain_name              = aws_s3_bucket.product_images.bucket_regional_domain_name
-    origin_id                = "S3ProductImages"
-    origin_access_control_id = aws_s3_bucket_access_control.product_images.id
+    domain_name = aws_s3_bucket.product_images.bucket_regional_domain_name
+    origin_id   = "S3ProductImages"
+
+    s3_origin_config {
+      origin_access_identity = aws_cloudfront_origin_access_identity.product_images.cloudfront_access_identity_path
+    }
   }
 
   enabled             = true
@@ -131,13 +136,6 @@ resource "aws_cloudfront_distribution" "product_images" {
   }
 }
 
-# Origin Access Control (more secure than OAI)
-resource "aws_s3_bucket_access_control" "product_images" {
-  name = "sams-suit-shop-oac"
-
-  origin_access_levels = ["S3"]
-}
-
 # Custom cache policy for product images
 resource "aws_cloudfront_cache_policy" "product_images" {
   name            = "product-images-cache-policy"
@@ -147,15 +145,15 @@ resource "aws_cloudfront_cache_policy" "product_images" {
   min_ttl         = 0
 
   parameters_in_cache_key_and_forwarded_to_origin {
-    query_strings {
+    query_strings_config {
       query_string_behavior = "none"
     }
 
-    headers {
+    headers_config {
       header_behavior = "none"
     }
 
-    cookies {
+    cookies_config {
       cookie_behavior = "none"
     }
 
@@ -193,10 +191,8 @@ resource "aws_cloudfront_response_headers_policy" "security_headers" {
   }
 }
 
-# Data source for AWS account ID
-data "aws_caller_identity" "current" {}
-
 # Outputs
+# Note: aws_caller_identity data source is defined in main.tf
 output "s3_bucket_name" {
   description = "Name of the S3 bucket for product images"
   value       = aws_s3_bucket.product_images.id
