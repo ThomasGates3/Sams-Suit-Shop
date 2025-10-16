@@ -362,7 +362,11 @@ resource "aws_ecs_task_definition" "backend" {
         { name = "NODE_ENV", value = "production" },
         { name = "PORT", value = "3000" },
         { name = "JWT_SECRET", value = "prod-secret-key-min-32-characters-long" },
-        { name = "JWT_EXPIRY", value = "3600" }
+        { name = "JWT_EXPIRY", value = "3600" },
+        { name = "AWS_REGION", value = var.aws_region },
+        { name = "S3_BUCKET_NAME", value = aws_s3_bucket.product_images.id },
+        { name = "CLOUDFRONT_DOMAIN_NAME", value = aws_cloudfront_distribution.product_images.domain_name },
+        { name = "CLOUDFRONT_DISTRIBUTION_ID", value = aws_cloudfront_distribution.product_images.id }
       ]
       logConfiguration = {
         logDriver = "awslogs"

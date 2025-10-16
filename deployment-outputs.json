@@ -1,0 +1,71 @@
+{
+  "alb_dns_name": {
+    "sensitive": false,
+    "type": "string",
+    "value": "sams-suit-shop-alb-740113297.us-east-1.elb.amazonaws.com"
+  },
+  "backend_ecr_repository_url": {
+    "sensitive": false,
+    "type": "string",
+    "value": "049475639513.dkr.ecr.us-east-1.amazonaws.com/sams-suit-shop-backend"
+  },
+  "cloudfront_distribution_arn": {
+    "sensitive": false,
+    "type": "string",
+    "value": "arn:aws:cloudfront::049475639513:distribution/E3MH39NO97LDX9"
+  },
+  "cloudfront_distribution_id": {
+    "sensitive": false,
+    "type": "string",
+    "value": "E3MH39NO97LDX9"
+  },
+  "cloudfront_domain_name": {
+    "sensitive": false,
+    "type": "string",
+    "value": "d3on56fzg4so2d.cloudfront.net"
+  },
+  "ecr_repository_urls": {
+    "sensitive": false,
+    "type": [
+      "object",
+      {
+        "backend": "string",
+        "frontend": "string"
+      }
+    ],
+    "value": {
+      "backend": "049475639513.dkr.ecr.us-east-1.amazonaws.com/sams-suit-shop-backend",
+      "frontend": "049475639513.dkr.ecr.us-east-1.amazonaws.com/sams-suit-shop-frontend"
+    }
+  },
+  "ecs_cluster_name": {
+    "sensitive": false,
+    "type": "string",
+    "value": "sams-suit-shop"
+  },
+  "ecs_task_s3_role_arn": {
+    "sensitive": false,
+    "type": "string",
+    "value": "arn:aws:iam::049475639513:role/sams-suit-shop-ecs-s3-upload-role"
+  },
+  "ecs_task_s3_role_name": {
+    "sensitive": false,
+    "type": "string",
+    "value": "sams-suit-shop-ecs-s3-upload-role"
+  },
+  "frontend_ecr_repository_url": {
+    "sensitive": false,
+    "type": "string",
+    "value": "049475639513.dkr.ecr.us-east-1.amazonaws.com/sams-suit-shop-frontend"
+  },
+  "s3_bucket_name": {
+    "sensitive": false,
+    "type": "string",
+    "value": "sams-suit-shop-images-049475639513"
+  },
+  "s3_bucket_region": {
+    "sensitive": false,
+    "type": "string",
+    "value": "us-east-1"
+  }
+}
