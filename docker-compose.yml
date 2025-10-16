@@ -1,0 +1,47 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: sams-suit-shop-backend
+    ports:
+      - "3000:3000"
+    environment:
+      NODE_ENV: development
+      PORT: 3000
+      DATABASE_URL: sqlite:./data/suit-shop.db
+      JWT_SECRET: dev-secret-key-change-in-production
+      JWT_EXPIRY: 3600
+      LOG_LEVEL: debug
+    volumes:
+      - ./backend/src:/app/src
+      - ./backend/data:/app/data
+    command: npm run dev
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: sams-suit-shop-frontend
+    ports:
+      - "5173:80"
+    depends_on:
+      backend:
+        condition: service_healthy
+    environment:
+      VITE_API_URL: http://localhost:3000
+    volumes:
+      - ./frontend/src:/app/src
+    command: npm run dev
+
+networks:
+  default:
+    name: sams-suit-shop-network
