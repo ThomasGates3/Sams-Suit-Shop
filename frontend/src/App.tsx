@@ -4,6 +4,30 @@ import { CartProvider, useCart } from './context/CartContext';
 import { ProductDetail } from './pages/ProductDetail';
 import { Cart } from './pages/Cart';
 
+// Import images
+import deepBlueSuit from './images/deep-blue-suit.webp';
+import burgundySuit from './images/burgundy-suit.webp';
+import lightGraySuit from './images/light-gray-suit.webp';
+import whiteweddingSuit from './images/white-wedding-suit.jpg';
+import brownTweedSuit from './images/brown-tweed-suit.webp';
+import roseGoldSuit from './images/rose-gold-suit.webp';
+import oliveGreenSuit from './images/olive-green-suit.webp';
+import blackFormalSuit from './images/black-formal-suit.webp';
+import charcoalSuit from './images/charcoal-suit.webp';
+
+// Map image paths to product names
+const imageMap: Record<string, string> = {
+  '/images/deep-blue-suit.webp': deepBlueSuit,
+  '/images/burgundy-suit.webp': burgundySuit,
+  '/images/light-gray-suit.webp': lightGraySuit,
+  '/images/white-wedding-suit.jpg': whiteweddingSuit,
+  '/images/brown-tweed-suit.webp': brownTweedSuit,
+  '/images/rose-gold-suit.webp': roseGoldSuit,
+  '/images/olive-green-suit.webp': oliveGreenSuit,
+  '/images/black-formal-suit.webp': blackFormalSuit,
+  '/images/charcoal-suit.webp': charcoalSuit,
+};
+
 interface Product {
   id: string;
   name: string;
@@ -127,9 +151,9 @@ function AppContent() {
                     }}
                   >
                     <div className="h-48 bg-gray-200 overflow-hidden">
-                      {product.image_url ? (
+                      {product.image_url && imageMap[product.image_url] ? (
                         <img
-                          src={product.image_url}
+                          src={imageMap[product.image_url]}
                           alt={product.name}
                           className="w-full h-full object-cover"
                           loading="lazy"

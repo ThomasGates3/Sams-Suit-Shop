@@ -20,6 +20,153 @@ app.use(express.json());
 // Initialize database
 initializeDatabase();
 
+// Seed database if empty
+seedDatabaseIfEmpty();
+
+function seedDatabaseIfEmpty() {
+  const productCount = db.prepare('SELECT COUNT(*) as count FROM products').get() as { count: number };
+
+  if (productCount.count > 0) {
+    return; // Already seeded
+  }
+
+  const sampleProducts = [
+    {
+      name: 'Classic Black Formal Suit',
+      description: 'Elegant black suit perfect for formal occasions',
+      price: 299.99,
+      style: 'formal',
+      sizes: JSON.stringify(['S', 'M', 'L', 'XL']),
+      image_url: '/images/black-formal-suit.webp',
+      stock: 15
+    },
+    {
+      name: 'Navy Blue Wedding Suit',
+      description: 'Premium wedding suit with perfect tailoring',
+      price: 449.99,
+      style: 'wedding',
+      sizes: JSON.stringify(['S', 'M', 'L', 'XL', 'XXL']),
+      image_url: '/images/white-wedding-suit.jpg',
+      stock: 10
+    },
+    {
+      name: 'Charcoal Casual Suit',
+      description: 'Comfortable casual suit for everyday wear',
+      price: 199.99,
+      style: 'casual',
+      sizes: JSON.stringify(['XS', 'S', 'M', 'L', 'XL']),
+      image_url: '/images/charcoal-suit.webp',
+      stock: 20
+    },
+    {
+      name: 'Burgundy Formal Suit',
+      description: 'Deep burgundy suit for special events',
+      price: 329.99,
+      style: 'formal',
+      sizes: JSON.stringify(['S', 'M', 'L']),
+      image_url: '/images/burgundy-suit.webp',
+      stock: 8
+    },
+    {
+      name: 'Light Gray Casual Suit',
+      description: 'Light and airy casual suit perfect for summer',
+      price: 189.99,
+      style: 'casual',
+      sizes: JSON.stringify(['S', 'M', 'L', 'XL']),
+      image_url: '/images/light-gray-suit.webp',
+      stock: 12
+    },
+    {
+      name: 'White Wedding Suit',
+      description: 'Pristine white suit for grooms and formal events',
+      price: 499.99,
+      style: 'wedding',
+      sizes: JSON.stringify(['S', 'M', 'L', 'XL']),
+      image_url: '/images/white-wedding-suit.jpg',
+      stock: 6
+    },
+    {
+      name: 'Brown Tweed Casual Suit',
+      description: 'Classic tweed suit with rustic charm',
+      price: 219.99,
+      style: 'casual',
+      sizes: JSON.stringify(['S', 'M', 'L']),
+      image_url: '/images/brown-tweed-suit.webp',
+      stock: 9
+    },
+    {
+      name: 'Deep Blue Formal Suit',
+      description: 'Rich navy formal suit for business and events',
+      price: 349.99,
+      style: 'formal',
+      sizes: JSON.stringify(['XS', 'S', 'M', 'L', 'XL', 'XXL']),
+      image_url: '/images/deep-blue-suit.webp',
+      stock: 16
+    },
+    {
+      name: 'Rose Gold Wedding Suit',
+      description: 'Stunning rose gold suit for modern weddings',
+      price: 459.99,
+      style: 'wedding',
+      sizes: JSON.stringify(['S', 'M', 'L', 'XL']),
+      image_url: '/images/rose-gold-suit.webp',
+      stock: 7
+    },
+    {
+      name: 'Olive Green Casual Suit',
+      description: 'Trendy olive green suit for a modern look',
+      price: 209.99,
+      style: 'casual',
+      sizes: JSON.stringify(['S', 'M', 'L', 'XL']),
+      image_url: '/images/olive-green-suit.webp',
+      stock: 11
+    }
+  ];
+
+  const insertProduct = db.prepare(`
+    INSERT INTO products (id, name, description, price, style, sizes, image_url, stock)
+    VALUES (?, ?, ?, ?, ?, ?, ?, ?)
+  `);
+
+  for (const product of sampleProducts) {
+    insertProduct.run(
+      `prod_${uuidv4()}`,
+      product.name,
+      product.description,
+      product.price,
+      product.style,
+      product.sizes,
+      product.image_url,
+      product.stock
+    );
+  }
+
+  // Create default users if they don't exist
+  const userCount = db.prepare('SELECT COUNT(*) as count FROM users').get() as { count: number };
+  if (userCount.count === 0) {
+    const insertUser = db.prepare(`
+      INSERT INTO users (id, email, password_hash, is_admin)
+      VALUES (?, ?, ?, ?)
+    `);
+
+    insertUser.run(
+      `user_${uuidv4()}`,
+      'admin@example.com',
+      AuthService.hashPassword('AdminPass123'),
+      1
+    );
+
+    insertUser.run(
+      `user_${uuidv4()}`,
+      'customer@example.com',
+      AuthService.hashPassword('CustomerPass123'),
+      0
+    );
+  }
+
+  console.log('✓ Database seeded with 10 products');
+}
+
 // Health check endpoint
 app.get('/health', (_req, res) => {
   res.json({ status: 'ok', timestamp: new Date().toISOString() });

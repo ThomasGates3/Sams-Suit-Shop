@@ -11,7 +11,7 @@ const sampleProducts = [
     price: 299.99,
     style: 'formal',
     sizes: JSON.stringify(['S', 'M', 'L', 'XL']),
-    image_url: 'https://images.unsplash.com/photo-1591047139829-d91aecb6caea?w=500',
+    image_url: '/images/deep-blue-suit.webp',
     stock: 15
   },
   {
@@ -20,7 +20,7 @@ const sampleProducts = [
     price: 449.99,
     style: 'wedding',
     sizes: JSON.stringify(['S', 'M', 'L', 'XL', 'XXL']),
-    image_url: 'https://images.unsplash.com/photo-1557622645-a3f7e78cace7?w=500',
+    image_url: '/images/white-wedding-suit.jpg',
     stock: 10
   },
   {
@@ -29,7 +29,7 @@ const sampleProducts = [
     price: 199.99,
     style: 'casual',
     sizes: JSON.stringify(['XS', 'S', 'M', 'L', 'XL']),
-    image_url: 'https://images.unsplash.com/photo-1591089206268-1fef3e6a3e0a?w=500',
+    image_url: '/images/deep-blue-suit.webp',
     stock: 20
   },
   {
@@ -38,7 +38,7 @@ const sampleProducts = [
     price: 329.99,
     style: 'formal',
     sizes: JSON.stringify(['S', 'M', 'L']),
-    image_url: 'https://images.unsplash.com/photo-1591489834954-bf5d2b8e10d2?w=500',
+    image_url: '/images/burgundy-suit.webp',
     stock: 8
   },
   {
@@ -47,7 +47,7 @@ const sampleProducts = [
     price: 189.99,
     style: 'casual',
     sizes: JSON.stringify(['S', 'M', 'L', 'XL']),
-    image_url: 'https://images.unsplash.com/photo-1594938298603-c8148c4dae35?w=500',
+    image_url: '/images/light-gray-suit.webp',
     stock: 12
   },
   {
@@ -56,7 +56,7 @@ const sampleProducts = [
     price: 499.99,
     style: 'wedding',
     sizes: JSON.stringify(['S', 'M', 'L', 'XL']),
-    image_url: 'https://images.unsplash.com/photo-1558769132-cb1aea458c5e?w=500',
+    image_url: '/images/white-wedding-suit.jpg',
     stock: 6
   },
   {
@@ -65,7 +65,7 @@ const sampleProducts = [
     price: 219.99,
     style: 'casual',
     sizes: JSON.stringify(['S', 'M', 'L']),
-    image_url: 'https://images.unsplash.com/photo-1599643478518-a784e5dc4c8f?w=500',
+    image_url: '/images/brown-tweed-suit.webp',
     stock: 9
   },
   {
@@ -74,7 +74,7 @@ const sampleProducts = [
     price: 349.99,
     style: 'formal',
     sizes: JSON.stringify(['XS', 'S', 'M', 'L', 'XL', 'XXL']),
-    image_url: 'https://images.unsplash.com/photo-1612036782180-69c773e01000?w=500',
+    image_url: '/images/deep-blue-suit.webp',
     stock: 16
   },
   {
@@ -83,7 +83,7 @@ const sampleProducts = [
     price: 459.99,
     style: 'wedding',
     sizes: JSON.stringify(['S', 'M', 'L', 'XL']),
-    image_url: 'https://images.unsplash.com/photo-1578932750294-708d6d8f144e?w=500',
+    image_url: '/images/rose-gold-suit.webp',
     stock: 7
   },
   {
@@ -92,7 +92,7 @@ const sampleProducts = [
     price: 209.99,
     style: 'casual',
     sizes: JSON.stringify(['S', 'M', 'L', 'XL']),
-    image_url: 'https://images.unsplash.com/photo-1596784384885-d9f22c3a7d5c?w=500',
+    image_url: '/images/olive-green-suit.webp',
     stock: 11
   }
 ];
