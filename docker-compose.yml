@@ -37,9 +37,6 @@ services:
       - backend
     environment:
       VITE_API_URL: http://localhost:3000
-    volumes:
-      - ./frontend/src:/app/src
-    command: npm run dev
 
 networks:
   default:
