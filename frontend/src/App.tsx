@@ -67,7 +67,7 @@ function AppContent() {
   useEffect(() => {
     const fetchProducts = async () => {
       try {
-        const res = await axios.get('http://localhost:3000/api/products');
+        const res = await axios.get('/api/products');
         setProducts(res.data.data || []);
       } catch (err) {
         console.error('Failed to fetch products:', err);
