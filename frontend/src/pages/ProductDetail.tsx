@@ -47,7 +47,7 @@ export function ProductDetail({ productId, onBack }: ProductDetailProps) {
   useEffect(() => {
     const fetchProduct = async () => {
       try {
-        const res = await axios.get(`http://localhost:3000/api/products/${productId}`);
+        const res = await axios.get(`/api/products/${productId}`);
         setProduct(res.data.data);
         const sizes = JSON.parse(res.data.data.sizes);
         setSelectedSize(sizes[0] || 'M');
