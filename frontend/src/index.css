@@ -1,9 +1,12 @@
+@import url('https://fonts.googleapis.com/css2?family=BBH+Sans+Bogle&display=swap');
+
 @tailwind base;
 @tailwind components;
 @tailwind utilities;
 
 :root {
   color-scheme: light;
+  font-family: 'BBH Sans Bogle', sans-serif;
 }
 
 body {
@@ -11,6 +14,7 @@ body {
   display: flex;
   place-items: center;
   min-height: 100vh;
+  font-family: 'BBH Sans Bogle', sans-serif;
 }
 
 #root {
