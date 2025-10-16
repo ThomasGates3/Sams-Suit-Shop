@@ -12,6 +12,13 @@ if (!fs.existsSync(dataDir)) {
 }
 
 const dbPath = path.join(dataDir, 'suit-shop.db');
+
+// Delete database if RESET_DB environment variable is set
+if (process.env.RESET_DB === 'true' && fs.existsSync(dbPath)) {
+  fs.unlinkSync(dbPath);
+  console.log('✓ Database reset (file deleted)');
+}
+
 export const db: BetterSqlite3.Database = new Database(dbPath);
 
 export function initializeDatabase() {

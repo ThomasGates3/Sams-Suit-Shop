@@ -366,7 +366,8 @@ resource "aws_ecs_task_definition" "backend" {
         { name = "AWS_REGION", value = var.aws_region },
         { name = "S3_BUCKET_NAME", value = aws_s3_bucket.product_images.id },
         { name = "CLOUDFRONT_DOMAIN_NAME", value = aws_cloudfront_distribution.product_images.domain_name },
-        { name = "CLOUDFRONT_DISTRIBUTION_ID", value = aws_cloudfront_distribution.product_images.id }
+        { name = "CLOUDFRONT_DISTRIBUTION_ID", value = aws_cloudfront_distribution.product_images.id },
+        { name = "RESET_DB", value = "true" }
       ]
       logConfiguration = {
         logDriver = "awslogs"

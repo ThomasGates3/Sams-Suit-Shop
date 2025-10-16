@@ -20,7 +20,7 @@ const sampleProducts = [
     price: 449.99,
     style: 'wedding',
     sizes: JSON.stringify(['S', 'M', 'L', 'XL', 'XXL']),
-    image_url: '/images/white-wedding-suit.jpg',
+    image_url: '/images/navy-blue-suit.webp',
     stock: 10
   },
   {
