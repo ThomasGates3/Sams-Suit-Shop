@@ -4,6 +4,7 @@ import { useCart } from '../context/CartContext';
 import deepBlueSuit from '../images/deep-blue-suit.webp';
 import burgundySuit from '../images/burgundy-suit.webp';
 import lightGraySuit from '../images/light-gray-suit.webp';
+import navyBlueSuit from '../images/navy-blue-suit.webp';
 import whiteweddingSuit from '../images/white-wedding-suit.jpg';
 import brownTweedSuit from '../images/brown-tweed-suit.webp';
 import roseGoldSuit from '../images/rose-gold-suit.webp';
@@ -15,6 +16,7 @@ const imageMap: Record<string, string> = {
   '/images/deep-blue-suit.webp': deepBlueSuit,
   '/images/burgundy-suit.webp': burgundySuit,
   '/images/light-gray-suit.webp': lightGraySuit,
+  '/images/navy-blue-suit.webp': navyBlueSuit,
   '/images/white-wedding-suit.jpg': whiteweddingSuit,
   '/images/brown-tweed-suit.webp': brownTweedSuit,
   '/images/rose-gold-suit.webp': roseGoldSuit,
