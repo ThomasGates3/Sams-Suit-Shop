@@ -3,8 +3,8 @@ resource "aws_s3_bucket" "product_images" {
   bucket = "sams-suit-shop-images-${data.aws_caller_identity.current.account_id}"
 
   tags = {
-    Name        = "Sam's Suit Shop Product Images"
-    Environment = var.environment
+    Name        = "sams-suit-shop-product-images"
+    Environment = "production"
     Project     = "sams-suit-shop"
   }
 }
@@ -130,19 +130,19 @@ resource "aws_cloudfront_distribution" "product_images" {
   }
 
   tags = {
-    Name        = "Sam's Suit Shop CloudFront"
-    Environment = var.environment
+    Name        = "sams-suit-shop-cloudfront"
+    Environment = "production"
     Project     = "sams-suit-shop"
   }
 }
 
 # Custom cache policy for product images
 resource "aws_cloudfront_cache_policy" "product_images" {
-  name            = "product-images-cache-policy"
-  comment         = "Cache policy for product images (1 year)"
-  default_ttl     = 31536000 # 1 year
-  max_ttl         = 31536000 # 1 year
-  min_ttl         = 0
+  name        = "product-images-cache-policy"
+  comment     = "Cache policy for product images (1 year)"
+  default_ttl = 31536000 # 1 year
+  max_ttl     = 31536000 # 1 year
+  min_ttl     = 0
 
   parameters_in_cache_key_and_forwarded_to_origin {
     query_strings_config {
@@ -157,7 +157,7 @@ resource "aws_cloudfront_cache_policy" "product_images" {
       cookie_behavior = "none"
     }
 
-    enable_accept_encoding_gzip  = true
+    enable_accept_encoding_gzip   = true
     enable_accept_encoding_brotli = true
   }
 }

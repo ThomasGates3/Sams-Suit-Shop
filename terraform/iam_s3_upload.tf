@@ -24,8 +24,8 @@ resource "aws_iam_role" "ecs_task_s3_role" {
 
 # IAM Policy for S3 upload permissions
 resource "aws_iam_role_policy" "ecs_task_s3_policy" {
-  name   = "sams-suit-shop-ecs-s3-upload-policy"
-  role   = aws_iam_role.ecs_task_s3_role.id
+  name = "sams-suit-shop-ecs-s3-upload-policy"
+  role = aws_iam_role.ecs_task_s3_role.id
   policy = jsonencode({
     Version = "2012-10-17"
     Statement = [

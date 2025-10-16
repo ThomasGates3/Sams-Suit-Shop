@@ -73,8 +73,8 @@ resource "aws_route_table" "public" {
   vpc_id = aws_vpc.main.id
 
   route {
-    cidr_block      = "0.0.0.0/0"
-    gateway_id      = aws_internet_gateway.main.id
+    cidr_block = "0.0.0.0/0"
+    gateway_id = aws_internet_gateway.main.id
   }
 
   tags = { Name = "sams-suit-shop-rt" }
@@ -92,8 +92,8 @@ resource "aws_route_table_association" "public2" {
 
 # Elastic IP for NAT Gateway
 resource "aws_eip" "nat" {
-  domain = "vpc"
-  tags   = { Name = "sams-suit-shop-eip" }
+  domain     = "vpc"
+  tags       = { Name = "sams-suit-shop-eip" }
   depends_on = [aws_internet_gateway.main]
 }
 
@@ -318,8 +318,8 @@ resource "aws_iam_role" "ecs_task_role" {
 
 # ECR Policy for task role
 resource "aws_iam_role_policy" "ecs_task_role_ecr_policy" {
-  name   = "sams-suit-shop-ecr-policy"
-  role   = aws_iam_role.ecs_task_role.id
+  name = "sams-suit-shop-ecr-policy"
+  role = aws_iam_role.ecs_task_role.id
   policy = jsonencode({
     Version = "2012-10-17"
     Statement = [
